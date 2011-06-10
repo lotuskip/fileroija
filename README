@@ -1,0 +1,34 @@
+fileroija is a small program to randomly select files from a directory tree. It
+can be used for instance to select random songs from your music library.
+
+Compile with:
+	g++ -o fileroija fileroija.cpp -O2 -lpcrecpp
+to support regular expressions (you will need the pcre library), or
+	g++ -o fileroija fileroija.cpp -O2 -DNO_REGEXP
+to disable them.
+
+Usage:
+	fileroija [directory] <regular expression (perl-type)> <-nosub>
+
+Upon execution, fileroija will read the given directory, and, unless the
+"-nosub" flag is given, recursively all the subdirectories and collect all
+regular files (that match the given regular expression if one is given).
+It will then report how many files it found. It needs to find at least 2 files
+to function.
+
+Note that the regular expression is only tested against the file names; it does
+not consider directories!
+
+Next, fileroija will wait for user input. If you enter a positive number,
+fileroija will pick that many random files from the selected set and print
+the filenames (with full paths) to stdout. The randomisation is designed so
+that at least half of all the files must become picked once before any file
+can be selected another time. By entering '0', you can force the memory of
+previous picks to be cleared.
+
+The idea is to pipe the stdout output for further processing, e.g. to your
+favourite music player to create a playlist. Note that the filenames are
+separated by newlines.
+
+Enter ^C or ^D at any time to quit fileroija.
+
