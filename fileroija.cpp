@@ -9,8 +9,7 @@
 #ifndef NO_REGEXP
 #include <pcrecpp.h>
 #else
-#include <cstdlib>
-#endif
+#include <cstdliif
 
 using namespace std;
 
@@ -18,7 +17,7 @@ const char VERSION[] = "3";
 const string nosubs_flag = "-nosub";
 
 vector<string> foundfiles;
-set<size_t> last_gen;
+set<size_t> last_gen; // previously generated entries
 #ifndef NO_REGEXP
 pcrecpp::RE *re = NULL;
 #endif
@@ -35,6 +34,7 @@ void go_thru_dir(const char* name)
 	s += '/';
 	while((dirp = readdir(dp)) != NULL)
 	{
+		// Ignore "." and "..":
 		if(dirp->d_name[0] == '.' && (dirp->d_name[1] == '\0'
 			|| (dirp->d_name[1] == '.' && dirp->d_name[2] == '\0')))
 			continue;
@@ -43,7 +43,7 @@ void go_thru_dir(const char* name)
 			if(do_subdirs)
 				go_thru_dir((s + dirp->d_name).c_str());
 		}
-		else if(dirp->d_type == DT_REG)
+		else if(dirp->d_type == DT_REG) // regular file
 		{
 #ifndef NO_REGEXP
 			if(!re || re->FullMatch(dirp->d_name))
@@ -104,10 +104,8 @@ int main(int argc, char* argv[])
 
 	int in;
 	size_t next;
-	for(;;)
+	while(cin >> in)
 	{
-		if(!(cin >> in))
-			break;
 		if(in == 0)
 		{
 			last_gen.clear();
@@ -115,14 +113,14 @@ int main(int argc, char* argv[])
 		}
 		while(in-- > 0)
 		{
-			// Collect previously generated numbers so as to not
-			// generate same results again too soon:
+			/* Collect previously generated numbers so as to not
+			 * generate same results again too soon: */
 			do next = random()%foundfiles.size();
 			while(last_gen.find(next) != last_gen.end());
 			cout << foundfiles[next] << endl;
 			last_gen.insert(next);
-			// Only collect last_gens until half of the total set
-			// has been generated:
+			/* Only collect last_gens until half of the total set
+			 * has been generated: */
 			if(last_gen.size() > foundfiles.size()/2)
 				last_gen.clear();
 		}
