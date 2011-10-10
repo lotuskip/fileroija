@@ -9,7 +9,7 @@
 #ifndef NO_REGEXP
 #include <pcrecpp.h>
 #else
-#include <cstdliif
+#include <cstdlib>
 
 using namespace std;
 
